@@ -1,6 +1,6 @@
 package Text::CSV::Auto::ExportTo::MySQL;
 BEGIN {
-  $Text::CSV::Auto::ExportTo::MySQL::VERSION = '0.01';
+  $Text::CSV::Auto::ExportTo::MySQL::VERSION = '0.02';
 }
 use Moose;
 
@@ -88,17 +88,17 @@ sub _build_create_sql {
     foreach my $column (@$columns) {
         my $sql = $column->{header} . ' ';
 
-        if ($column->{string}) {
-            $sql .= 'VARCHAR(' . $column->{string_length} . ') NOT NULL';
+        if ($column->{data_type} eq 'string') {
+            $sql .= 'VARCHAR(' . ($column->{string_length} || 1) . ') NOT NULL';
         }
-        elsif ($column->{decimal}) {
+        elsif ($column->{data_type} eq 'decimal') {
             $sql .= sprintf(
                 'DECIMAL( %d, %d ) NOT NULL',
                 $column->{integer_length} + $column->{fractional_length},
                 $column->{fractional_length},
             );
         }
-        elsif ($column->{integer}) {
+        elsif ($column->{data_type} eq 'integer') {
             my $type;
             if ($column->{signed}) {
                 $type = 'BIGINT';
@@ -120,7 +120,7 @@ sub _build_create_sql {
                 ($column->{signed} ? 'SIGNED' : 'UNSIGNED'),
             );
         }
-        elsif ($column->{mdy_date} or $column->{ymd_date}) {
+        elsif ($column->{data_type} eq 'mdy_date' or $column->{data_type} eq 'ymd_date') {
             $sql .= 'DATE NOT NULL';
         }
 
@@ -151,21 +151,31 @@ sub export {
     my $table      = $self->table();
     my $headers    = $self->auto->headers();
     my $auto       = $self->auto();
+    my $columns    = $self->auto->analyze();
 
     $self->_run(sub{
         my ($dbh) = @_;
 
         $dbh->do('DROP TABLE IF EXISTS ' . $table );
 
+        $dbh->do( $create_sql );
+
         my $sth = $dbh->prepare( sprintf(
             'INSERT INTO %s (%s) VALUES (%s)',
             $table,
-            join(',', $self->headers()),
+            join(',', @$headers),
             join(',', map {'?'} @$headers ),
         ) );
 
         $auto->_raw_process(sub{
             my ($row) = @_;
+            my $i = 0;
+            foreach my $column (@$columns) {
+                if ($column->{data_type} eq 'mdy_date') {
+                    $row->[$i] = sprintf('%04d-%02d-%02d', (split(/\//, $row->[$i]))[2,0,1] );
+                }
+                $i ++;
+            }
             $sth->execute( @$row );
         }, 1);
     });

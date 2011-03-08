@@ -24,9 +24,9 @@ my %WriteMakefileArgs = (
   'PREREQ_PM' => {
     'DBD::mysql' => '4.018',
     'Moose' => '1.24',
-    'Text::CSV::Auto' => '0.05'
+    'Text::CSV::Auto' => '0.06'
   },
-  'VERSION' => '0.01',
+  'VERSION' => '0.02',
   'test' => {
     'TESTS' => 't/*.t'
   }

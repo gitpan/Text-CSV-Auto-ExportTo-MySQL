@@ -7,5 +7,7 @@ README
 lib/Text/CSV/Auto/ExportTo/MySQL.pm
 lib/Text/CSV/Auto/Plugin/ExportToMySQL.pm
 t/00-compile.t
+t/export.t
+t/features.csv
 t/release-pod-coverage.t
 t/release-pod-syntax.t

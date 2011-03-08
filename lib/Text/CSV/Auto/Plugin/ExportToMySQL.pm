@@ -1,6 +1,6 @@
 package Text::CSV::Auto::Plugin::ExportToMySQL;
 BEGIN {
-  $Text::CSV::Auto::Plugin::ExportToMySQL::VERSION = '0.01';
+  $Text::CSV::Auto::Plugin::ExportToMySQL::VERSION = '0.02';
 }
 use Moose::Role;
 
@@ -20,7 +20,7 @@ Text::CSV::Auto to export to MySQL.
 =head1 DESCRIPTION
 
 This L<Text::CSV::Auto> plugin provides a simple interface to
-L<Text::CSV::Auto::ExportToMySQL>.
+L<Text::CSV::Auto::ExportTo::MySQL>.
 
 =head1 METHODS
 
@@ -43,7 +43,7 @@ sub export_to_mysql {
         $options = { @_ };
     }
 
-    return Text::CSV::Auto::ExportToMySQL->new(
+    return Text::CSV::Auto::ExportTo::MySQL->new(
         auto => $self,
         %$options,
     )->export();

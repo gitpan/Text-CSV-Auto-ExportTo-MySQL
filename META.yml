@@ -16,8 +16,8 @@ name: Text-CSV-Auto-ExportTo-MySQL
 requires:
   DBD::mysql: 4.018
   Moose: 1.24
-  Text::CSV::Auto: 0.05
+  Text::CSV::Auto: 0.06
 resources:
   bugtracker: http://rt.cpan.org/Public/Dist/Display.html?Name=Text-CSV-Auto-ExportTo-MySQL
   repository: git://github.com/bluefeet/Text-CSV-Auto-ExportTo-MySQL.git
-version: 0.01
+version: 0.02
